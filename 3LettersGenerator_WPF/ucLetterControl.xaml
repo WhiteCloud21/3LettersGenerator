@@ -19,6 +19,8 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <TextBlock Text="{Binding cp_Letter}" />
+        <Viewbox Grid.Row="1" VerticalAlignment="Stretch" Height="Auto">
+            <TextBlock Text="{Binding cp_Letter}" />
+        </Viewbox>
     </Grid>
 </UserControl>

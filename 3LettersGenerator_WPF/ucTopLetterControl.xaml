@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="_3LettersGenerator_WPF.ucTopLetterControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" xmlns:my="clr-namespace:_3LettersGenerator_WPF"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}" Name="uc_letter">
+    <Grid>
+        <my:ucLetterControl cp_Letter="{Binding ElementName=uc_letter, Path=cp_Letter, FallbackValue=A}">
+            <my:ucLetterControl.Triggers>
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:5"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </my:ucLetterControl.Triggers>
+        </my:ucLetterControl>
+    </Grid>
+</UserControl>

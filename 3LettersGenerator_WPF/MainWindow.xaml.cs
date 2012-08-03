@@ -70,7 +70,7 @@ namespace _3LettersGenerator_WPF
             if (_state.cf_OkChars.Count > 1 && !cf_isClosed)
             {
                 _state.cf_CurrentChar = _state.cf_OkChars[_state.cf_R.Next(0, _state.cf_OkChars.Count)];
-                if (_state.cf_R.Next(10) > 7)
+                if (_state.cf_R.Next(10) > 5)
                 {
                     _state.cf_CurrentState = false;
                     _state.cf_OkChars.Remove(_state.cf_CurrentChar);
@@ -83,6 +83,12 @@ namespace _3LettersGenerator_WPF
             }
             else
             {
+
+                lock (cf_timerLockObj)
+                {
+                    if (cf_timer != null)
+                        cf_timer.Change(1000, 50);
+                }
                 _state.cf_LetterNum++;
                 if (!cf_isClosed)
                 {
@@ -117,16 +123,15 @@ namespace _3LettersGenerator_WPF
 
         private void cm_showGeneratedLetter(cState state)
         {
-            w_topPanel.Children.Add(new ucLetterControl()
-            {
-                FontSize = 32,
+            w_topPanel.Children.Add(new ucTopLetterControl()
+            { 
                 cp_Letter = state.cf_OkChars[0]
             });
         }
 
         private void cm_initNewLetter(cState state)
         {
-            foreach (ucLetterControl _con in state.cf_Dic.Values)
+            foreach (ucBottomLetterControl _con in state.cf_Dic.Values)
             {
                 _con.IsEnabled = true;
             }
@@ -137,12 +142,11 @@ namespace _3LettersGenerator_WPF
             cm_stopTimer();
             w_bottomPanel.Children.Clear();
             w_topPanel.Children.Clear();
-            Dictionary<char, ucLetterControl> _dic = new Dictionary<char, ucLetterControl>();
+            Dictionary<char, ucBottomLetterControl> _dic = new Dictionary<char, ucBottomLetterControl>();
             foreach (char _ch in cc_Letters)
             {
-                var _lc = new ucLetterControl()
+                var _lc = new ucBottomLetterControl()
                 {
-                    FontSize = 32,
                     cp_Letter = _ch,
                 };
                 _dic.Add(_ch, _lc);
@@ -181,7 +185,7 @@ namespace _3LettersGenerator_WPF
         private class cState
         {
             public Random cf_R = new Random();
-            public Dictionary<char, ucLetterControl> cf_Dic;
+            public Dictionary<char, ucBottomLetterControl> cf_Dic;
             public List<char> cf_OkChars;
 
             public int cf_LetterNum = 0;

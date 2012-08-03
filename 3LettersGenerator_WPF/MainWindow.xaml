@@ -11,9 +11,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Name="w_topPanel" Orientation="Horizontal" />
-        <Viewbox Grid.Row="1" VerticalAlignment="Stretch" Height="Auto">
-            <local:ucLetterControl x:Name="uc_mainLetter" IsEnabled="True" />
-        </Viewbox>
+        <local:ucLetterControl Grid.Row="1" x:Name="uc_mainLetter" IsEnabled="True" />
         <StackPanel Grid.Row="2" Name="w_bottomPanel" Orientation="Horizontal" />
         <Button Name="uc_btnGo" Content="GO" Grid.Row="3" HorizontalAlignment="Right" Width="40" Click="uc_btnGo_Click" />
     </Grid>

@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="_3LettersGenerator_WPF.ucBottomLetterControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300" xmlns:my="clr-namespace:_3LettersGenerator_WPF"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}" Name="uc_letter">
+
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Grid}">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard x:Name="EnabledFalseAnim">
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:3"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <RemoveStoryboard BeginStoryboardName="EnabledFalseAnim"/>
+                    </Trigger.ExitActions>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="Opacity" Value="1.0" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <my:ucLetterControl cp_Letter="{Binding ElementName=uc_letter, Path=cp_Letter, FallbackValue=A}" />
+    </Grid>
+</UserControl>

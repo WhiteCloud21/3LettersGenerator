@@ -59,6 +59,12 @@
     <Compile Include="ucLetterControl.xaml.cs">
       <DependentUpon>ucLetterControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ucTopLetterControl.xaml.cs">
+      <DependentUpon>ucTopLetterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ucBottomLetterControl.xaml.cs">
+      <DependentUpon>ucBottomLetterControl.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -74,6 +80,14 @@
     <Page Include="ucLetterControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ucTopLetterControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ucBottomLetterControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
