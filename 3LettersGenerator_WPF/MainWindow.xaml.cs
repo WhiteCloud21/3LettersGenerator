@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Threading;
+using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Media.Animation;
 
 namespace _3LettersGenerator_WPF
 {
@@ -51,6 +43,9 @@ namespace _3LettersGenerator_WPF
 
         private bool cf_isClosed = false;
 
+        private Timer cf_timer = null;
+        private Object cf_timerLockObj = new Object();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -68,8 +63,78 @@ namespace _3LettersGenerator_WPF
             }
         }
 
+        private void cm_timerCallback(object state)
+        {
+            cState _state = state as cState;
+
+            if (_state.cf_OkChars.Count > 1 && !cf_isClosed)
+            {
+                _state.cf_CurrentChar = _state.cf_OkChars[_state.cf_R.Next(0, _state.cf_OkChars.Count)];
+                if (_state.cf_R.Next(10) > 7)
+                {
+                    _state.cf_CurrentState = false;
+                    _state.cf_OkChars.Remove(_state.cf_CurrentChar);
+                }
+                else
+                {
+                    _state.cf_CurrentState = true;
+                }
+                Dispatcher.Invoke((Action<cState>)cm_showCurrentLetter, _state);
+            }
+            else
+            {
+                _state.cf_LetterNum++;
+                if (!cf_isClosed)
+                {
+                    Dispatcher.Invoke((Action<cState>)cm_showGeneratedLetter, _state);
+                }
+                if (_state.cf_LetterNum <= 2)
+                {
+                    Dispatcher.Invoke((Action<cState>)cm_initNewLetter, _state);
+                    _state.cf_OkChars = new List<char>(cc_Letters);
+                }
+                else
+                {
+                    cm_stopTimer();
+                }
+            }
+        }
+
+        private void cm_showCurrentLetter(cState state)
+        {
+            uc_mainLetter.cp_Letter = state.cf_CurrentChar;
+            if (state.cf_CurrentState)
+            {
+                uc_mainLetter.IsEnabled = true;
+            }
+            else
+            {
+                // :(
+                uc_mainLetter.IsEnabled = false;
+                state.cf_Dic[state.cf_CurrentChar].IsEnabled = false;
+            }
+        }
+
+        private void cm_showGeneratedLetter(cState state)
+        {
+            w_topPanel.Children.Add(new ucLetterControl()
+            {
+                FontSize = 32,
+                cp_Letter = state.cf_OkChars[0]
+            });
+        }
+
+        private void cm_initNewLetter(cState state)
+        {
+            foreach (ucLetterControl _con in state.cf_Dic.Values)
+            {
+                _con.IsEnabled = true;
+            }
+        }
+
         private void uc_btnGo_Click(object sender, RoutedEventArgs e)
         {
+            cm_stopTimer();
             w_bottomPanel.Children.Clear();
             w_topPanel.Children.Clear();
             Dictionary<char, ucLetterControl> _dic = new Dictionary<char, ucLetterControl>();
@@ -85,48 +150,46 @@ namespace _3LettersGenerator_WPF
             }
 
             Random _r = new Random();
-            for (int c = 0; c < 3 && !cf_isClosed; c++)
-            {
-                foreach (ucLetterControl _con in _dic.Values)
-                {
-                    _con.IsEnabled = true;
-                }
 
-                List<char> _okChars = new List<char>(cc_Letters);
-                while (_okChars.Count > 1 && !cf_isClosed)
+            cf_timer = new Timer(
+                cm_timerCallback,
+                new cState()
                 {
-                    Thread.Sleep(50);
-                    char _ch = _okChars[_r.Next(0, _okChars.Count)];
-                    uc_mainLetter.cp_Letter = _ch;
-                    if (_r.Next(10) > 7)
-                    {
-                        // :(
-                        uc_mainLetter.IsEnabled = false;
-                        _dic[_ch].IsEnabled = false;
-                        _okChars.Remove(_ch);
-                    }
-                    else
-                    {
-                        uc_mainLetter.IsEnabled = true;
-                    }
-                    InvalidateVisual();
-                    App.Current.DoEvents();
-                }
-                if (!cf_isClosed)
-                {
-                    w_topPanel.Children.Add(new ucLetterControl()
-                    {
-                        FontSize = 32,
-                        cp_Letter = _okChars[0]
-                    });
-                    App.Current.DoEvents();
-                }
+                    cf_Dic = _dic,
+                    cf_OkChars = new List<char>(cc_Letters)
+                },
+                0,
+                50);
+        }
+
+        private void cm_stopTimer()
+        {
+            lock (cf_timerLockObj)
+            {
+                if (cf_timer != null)
+                    cf_timer.Dispose();
+                cf_timer = null;
             }
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            cm_stopTimer();
             cf_isClosed = true;
+        }
+
+        private class cState
+        {
+            public Random cf_R = new Random();
+            public Dictionary<char, ucLetterControl> cf_Dic;
+            public List<char> cf_OkChars;
+
+            public int cf_LetterNum = 0;
+            public char cf_CurrentChar;
+            /// <summary>
+            /// true - принимаю, false - не принимаю.
+            /// </summary>
+            public bool cf_CurrentState;
         }
     }
 }
