@@ -49,6 +49,8 @@ namespace _3LettersGenerator_WPF
                                                     'M'
                                                    };
 
+        private bool cf_isClosed = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -83,7 +85,7 @@ namespace _3LettersGenerator_WPF
             }
 
             Random _r = new Random();
-            for (int c = 0; c < 3; c++)
+            for (int c = 0; c < 3 && !cf_isClosed; c++)
             {
                 foreach (ucLetterControl _con in _dic.Values)
                 {
@@ -91,7 +93,7 @@ namespace _3LettersGenerator_WPF
                 }
 
                 List<char> _okChars = new List<char>(cc_Letters);
-                while (_okChars.Count > 1)
+                while (_okChars.Count > 1 && !cf_isClosed)
                 {
                     Thread.Sleep(50);
                     char _ch = _okChars[_r.Next(0, _okChars.Count)];
@@ -110,13 +112,21 @@ namespace _3LettersGenerator_WPF
                     InvalidateVisual();
                     App.Current.DoEvents();
                 }
-                w_topPanel.Children.Add(new ucLetterControl()
+                if (!cf_isClosed)
                 {
-                    FontSize = 32,
-                    cp_Letter = _okChars[0]
-                });
-                App.Current.DoEvents();
+                    w_topPanel.Children.Add(new ucLetterControl()
+                    {
+                        FontSize = 32,
+                        cp_Letter = _okChars[0]
+                    });
+                    App.Current.DoEvents();
+                }
             }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            cf_isClosed = true;
         }
     }
 }
