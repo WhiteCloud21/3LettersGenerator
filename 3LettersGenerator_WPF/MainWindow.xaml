@@ -13,6 +13,16 @@
         <StackPanel Grid.Row="0" Name="w_topPanel" Orientation="Horizontal" />
         <local:ucLetterControl Grid.Row="1" x:Name="uc_mainLetter" IsEnabled="True" />
         <StackPanel Grid.Row="2" Name="w_bottomPanel" Orientation="Horizontal" />
-        <Button Name="uc_btnGo" Content="GO" Grid.Row="3" HorizontalAlignment="Right" Width="40" Click="uc_btnGo_Click" />
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="40" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Букв:" Grid.Column="1" />
+            <TextBox Name="textBox" Grid.Column="2" TextWrapping="NoWrap" Text="{Binding LettersCount}" PreviewTextInput="NumberValidationTextBox" />
+            <Button Name="uc_btnGo" Grid.Column="3" Content="GO" Click="uc_btnGo_Click" />
+        </Grid>
     </Grid>
 </Window>

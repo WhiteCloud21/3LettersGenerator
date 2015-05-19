@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media.Animation;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace _3LettersGenerator_WPF
 {
@@ -45,6 +45,25 @@ namespace _3LettersGenerator_WPF
 
         private Timer cf_timer = null;
         private Object cf_timerLockObj = new Object();
+
+        public static readonly DependencyProperty LettersCountProperty = DependencyProperty.Register(
+            "LettersCount",
+            typeof(int),
+            typeof(MainWindow),
+            new PropertyMetadata(3)
+            );
+
+        public int LettersCount
+        {
+            get
+            {
+                return (int)GetValue(LettersCountProperty);
+            }
+            set
+            {
+                SetValue(LettersCountProperty, value);
+            }
+        }
 
         public MainWindow()
         {
@@ -94,7 +113,8 @@ namespace _3LettersGenerator_WPF
                 {
                     Dispatcher.Invoke((Action<cState>)cm_showGeneratedLetter, _state);
                 }
-                if (_state.cf_LetterNum <= 2)
+                var _lettersCount = (int)Dispatcher.Invoke((Func<int>)delegate { return this.LettersCount; });
+                if (_state.cf_LetterNum < _lettersCount)
                 {
                     Dispatcher.Invoke((Action<cState>)cm_initNewLetter, _state);
                     _state.cf_OkChars = new List<char>(cc_Letters);
@@ -182,7 +202,13 @@ namespace _3LettersGenerator_WPF
             cf_isClosed = true;
         }
 
-        private class cState
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+    private class cState
         {
             public Random cf_R = new Random();
             public Dictionary<char, ucBottomLetterControl> cf_Dic;
